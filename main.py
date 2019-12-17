@@ -28,6 +28,8 @@ auth = tweepy.OAuthHandler(api.CONSUMER_KEY, api.CONSUMER_SECRET)
 auth.set_access_token(api.ACCESS_KEY, api.ACCESS_SECRET)
 api = tweepy.API(auth)
 
+user = api.me()
+
 def retrive_last_seen_id(file_name):
     f_read = open(file_name, 'r')
     last_seen_id = int(f_read.read().strip())
@@ -56,18 +58,20 @@ def reply_to_tweets():
     )
 
     for mention in reversed(mentions):
-        print("Mantion made by @" + mention.user.screen_name)
-        print("Answering...")
-        last_seen_id = mention.id
-        store_last_seen_id(last_seen_id, FILE_NAME)
+        if user.screen_name in mention.full_text:
+            print("Mantion made by @" + mention.user.screen_name)
+            print("Mantion text: " + mention.full_text)
+            print("Answering...")
+            last_seen_id = mention.id
+            store_last_seen_id(last_seen_id, FILE_NAME)
 
-        like_tweet(mention.id)
-        api.update_status(
-            status = pick_random_compliment(), 
-            in_reply_to_status_id = str(mention.id), 
-            auto_populate_reply_metadata = True
-        )
+            like_tweet(mention.id)
+            api.update_status(
+                status = pick_random_compliment(), 
+                in_reply_to_status_id = str(mention.id), 
+                auto_populate_reply_metadata = True
+            )
 
 while True:
     reply_to_tweets()
-    time.sleep(10)
+    time.sleep(30)
