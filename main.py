@@ -56,8 +56,8 @@ def reply_to_tweets():
     )
 
     for mention in reversed(mentions):
-        print("Menção feita pelo usuário @" + mention.user.screen_name)
-        print("Respondendo...")
+        print("Mantion made by @" + mention.user.screen_name)
+        print("Answering...")
         last_seen_id = mention.id
         store_last_seen_id(last_seen_id, FILE_NAME)
 
