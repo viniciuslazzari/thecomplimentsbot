@@ -32,7 +32,8 @@ api = tweepy.API(
 
 ### GETTING SOME USEFUL VARIABLES ###
 bot = api.me()
-FILE_NAME = "last_seen_id.txt"
+FILE_NAME = "last_seen_mention_id.txt"
+emojis = ["💘", "💝", "💓", "💗", "💞", "💕", "💛", "❤️", "💖", "😍", "😘", "🥰", "😻"] 
 
 ### FUNCTION TO GET THE ID OF THE LAST MENTION TWEET ###
 def retrive_last_seen_id(file_name):
@@ -57,6 +58,19 @@ def pick_random_compliment():
     number = randint(0, len(compliments) - 1)
     return compliments[number][1]
 
+### FUNCTION TO CHOOSE FIVE RANDOM EMOJIS ###
+def pick_random_emojis():
+    results = []
+    emojis_list = ""
+
+    while len(results) != 5:
+        r = randint(0, len(emojis) - 1)
+        if r not in results:
+            results.append(r)
+            emojis_list = emojis_list + emojis[r]
+
+    return emojis_list
+
 ### FUNCTION TO REPLY ALL THE TWEETS ###
 def reply_to_tweets():
     last_seen_id = retrive_last_seen_id(FILE_NAME)
@@ -69,14 +83,13 @@ def reply_to_tweets():
     for mention in reversed(mentions):
         if bot.screen_name in mention.full_text:
             print("Mantion made by @" + mention.user.screen_name)
-            print("Mantion text: " + mention.full_text)
             print("Answering...")
             last_seen_id = mention.id
             store_last_seen_id(last_seen_id, FILE_NAME)
 
             like_tweet(mention.id)
             api.update_status(
-                status = pick_random_compliment(), 
+                status = pick_random_compliment() + " " + pick_random_emojis(), 
                 in_reply_to_status_id = str(mention.id), 
                 auto_populate_reply_metadata = True
             )
